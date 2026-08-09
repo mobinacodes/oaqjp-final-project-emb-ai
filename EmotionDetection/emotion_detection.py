@@ -7,18 +7,26 @@ def emotion_detector(text_to_analyze):
     myobj = { "raw_document": { "text": text_to_analyze } }
     
     response = requests.post(url, json=myobj, headers=headers)
-    
-    # Convert the response text into a dictionary
+
+    # Error handling for blank entries (status_code 400)
+    if response.status_code == 400:
+        return {
+            'anger': None,
+            'disgust': None,
+            'fear': None,
+            'joy': None,
+            'sadness': None,
+            'dominant_emotion': None
+        }
+
     formatted_response = json.loads(response.text)
     
-    # Extract the emotion scores
     anger_score = formatted_response['emotionPredictions'][0]['emotion']['anger']
     disgust_score = formatted_response['emotionPredictions'][0]['emotion']['disgust']
     fear_score = formatted_response['emotionPredictions'][0]['emotion']['fear']
     joy_score = formatted_response['emotionPredictions'][0]['emotion']['joy']
     sadness_score = formatted_response['emotionPredictions'][0]['emotion']['sadness']
     
-    # Find the dominant emotion
     emotion_scores = {
         'anger': anger_score,
         'disgust': disgust_score,
@@ -26,14 +34,4 @@ def emotion_detector(text_to_analyze):
         'joy': joy_score,
         'sadness': sadness_score
     }
-    dominant_emotion = max(emotion_scores, key=emotion_scores.get)
-    
-    # Return the required format
-    return {
-        'anger': anger_score,
-        'disgust': disgust_score,
-        'fear': fear_score,
-        'joy': joy_score,
-        'sadness': sadness_score,
-        'dominant_emotion': dominant_emotion
-    }
+    dominant_emotion = max
